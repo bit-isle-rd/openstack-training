@@ -1,0 +1,31 @@
+ADMIN_PASSWORD=openstack
+MYSQL_PASSWORD=stackdb
+RABBIT_PASSWORD=stackqueue
+SERVICE_PASSWORD=$ADMIN_PASSWORD
+HOST_IP=127.0.0.1
+SERVICE_TOKEN=tokentoken
+FLAT_INTERFACE=br100
+
+GLANCE_BRANCH=stable/havana
+HORIZON_BRANCH=stable/havana
+KEYSTONE_BRANCH=stable/havana
+NOVA_BRANCH=stable/havana
+GLANCE_BRANCH=stable/havana
+QUANTUM_BRANCH=stable/havana
+NEUTRON_BRANCH=stable/havana
+HEAT_BRANCH=stable/havana
+CEILOMETER_BRANCH=stable/havana
+# Neutron - Networking Service
+DISABLED_SERVICES=n-net
+ENABLED_SERVICES+=,q-svc,q-agt,q-dhcp,q-l3,q-meta,neutron
+# Neutron - Load Balancing
+ENABLED_SERVICES+=,q-lbaas
+# Heat - Orchestration Service
+ENABLED_SERVICES+=,heat,h-api,h-api-cfn,h-api-cw,h-eng
+HEAT_STANDALONE=True
+# Ceilometer - Metering Service (metering + alarming)
+ENABLED_SERVICES+=,ceilometer-acompute,ceilometer-acentral,ceilometer-collector,ceilometer-api
+ENABLED_SERVICES+=,ceilometer-alarm-notify,ceilometer-alarm-eval
+EXTRA_OPTS=(
+vnc_keymap=ja
+)
