@@ -1,0 +1,26 @@
+---
+- name: Open vSwitch
+  hosts: network_gateway:compute_backend
+  gather_facts: yes
+  sudo: yes
+
+  tasks:
+    - name: ensure openvswitch-related packages are installed
+      apt: pkg={{item}} force=yes
+      with_items:
+        - openvswitch-common
+        - openvswitch-switch
+        - openvswitch-datapath-dkms
+  
+    - name: ensure OVS kernel module is loaded
+      modprobe: name=openvswitch state=present
+  
+    - name: ensure default ovs bridge br-int exists
+      openvswitch_bridge: bridge=br-int state=present
+
+  handlers:
+    - name: restart openvswitch services
+      action: service name=openvswitch-switch state=restarted
+
+    - name: restart neutron-plugin-ovs-agent
+      service: name=neutron-plugin-openvswitch-agent state=restarted

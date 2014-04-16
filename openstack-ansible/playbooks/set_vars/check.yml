@@ -1,0 +1,69 @@
+---
+- name: Checking Variables
+  hosts: all[:1]
+  gather_facts: yes
+
+  tasks:
+    - name: Check root_db_password
+      fail: msg="root_db_password is automatically configured. Run the playbook again."
+      when: "root_db_password is not defined or not root_db_password"
+
+    - name: Check keystone_db_password
+      fail: msg="keystone_db_password is automatically configured. Run the playbook again."
+      when: "keystone_db_password is not defined or not keystone_db_password"
+
+    - name: Check glance_db_password
+      fail: msg="glance_db_password is automatically configured. Run the playbook again."
+      when: "glance_db_password is not defined or not glance_db_password"
+
+    - name: Check nova_db_password
+      fail: msg="nova_db_password is automatically configured. Run the playbook again."
+      when: "nova_db_password is not defined or not nova_db_password"
+
+    - name: Check quantum_db_password
+      fail: msg="quantum_db_password is automatically configured. Run the playbook again."
+      when: "quantum_db_password is not defined or not quantum_db_password"
+
+    - name: Check cinder_db_password
+      fail: msg="cinder_db_password is automatically configured. Run the playbook again."
+      when: "cinder_db_password is not defined or not cinder_db_password"
+
+    - name: Check glance_identity_password
+      fail: msg="glance_identity_password is automatically configured. Run the playbook again."
+      when: "glance_identity_password is not defined or not glance_identity_password"
+
+    - name: Check nova_identity_password
+      fail: msg="nova_identity_password is automatically configured. Run the playbook again."
+      when: "nova_identity_password is not defined or not nova_identity_password"
+
+    - name: Check ec2_identity_password
+      fail: msg="ec2_identity_password is automatically configured. Run the playbook again."
+      when: "ec2_identity_password is not defined or not ec2_identity_password"
+
+    - name: Check swift_identity_password
+      fail: msg="swift_identity_password is automatically configured. Run the playbook again."
+      when: "swift_identity_password is not defined or not swift_identity_password"
+
+    - name: Check quantum_identity_password
+      fail: msg="quantum_identity_password is automatically configured. Run the playbook again."
+      when: "quantum_identity_password is not defined or not quantum_identity_password"
+
+    - name: Check cinder_identity_password
+      fail: msg="cinder_identity_password is automatically configured. Run the playbook again."
+      when: "cinder_identity_password is not defined or not cinder_identity_password"
+
+    - name: Check admin_token
+      fail: msg="admin_token is automatically configured. Run the playbook again."
+      when: "admin_token is not defined or not admin_token"
+
+    - name: Check admin_password
+      fail: msg="admin_password is automatically configured. Run the playbook again."
+      when: "admin_password is not defined or not admin_password"
+
+    - name: Check primary_controller
+      fail: msg="primary_controller_host is automatically configured. Run the playbook again."
+      when: "primary_controller_host is not defined or not primary_controller_host"
+
+    - name: Check primary_frontend_host
+      fail: msg="primary_frontend_host is automatically configured. Run the playbook again."
+      when: "primary_frontend_host is not defined or not primary_frontend_host"

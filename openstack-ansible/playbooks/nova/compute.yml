@@ -1,0 +1,103 @@
+---
+- name: OpenStack Compute (Backend)
+  hosts: compute_backend
+  sudo: yes
+  vars_files:
+    - ../../program_vars/database_password
+    - ../../program_vars/keystone_data
+    - ../../program_vars/rabbitmq
+    - ../../program_vars/nova
+    - ../../program_vars/neutron_metadata_key
+
+  tasks:
+    - name: ensure net.ipv4.conf.all.rp_filter is 0
+      sysctl: name=net.ipv4.conf.all.rp_filter value=0 state=present 
+
+    - name: net.ipv4.conf.default.rp_filter is 0
+      sysctl: name=net.ipv4.conf.default.rp_filter value=0 state=present
+
+    - name: ensure nova-compute package is installed
+      apt: pkg={{item}} force=yes
+      with_items:
+        - nova-compute
+        - nova-compute-kvm
+        - python-mysqldb
+        - python-memcache
+        - pm-utils
+        - sysfsutils
+    
+    - name: ensure api-paste.ini file is configured
+      template: >
+            src=files/api-paste.ini
+            dest=/etc/nova/api-paste.ini
+            owner=nova
+            group=nova
+            mode=0660
+            backup=yes
+
+    - name: ensure nova.conf file is configured
+      template: >
+            src=files/nova.conf
+            dest=/etc/nova/nova.conf
+            owner=nova group=nova mode=0660
+            backup=yes
+      notify:
+        - restart nova-compute
+        
+    - name: ensure nova-compute.conf file is configured
+      copy: >
+            src=files/nova-compute.conf
+            dest=/etc/nova/nova-compute.conf
+            owner=nova group=nova mode=0660
+            backup=yes
+      notify:
+        - restart nova-compute
+
+    - name: ensure /etc/default/libvirt-bin file is configured
+      copy: >
+            src=files/libvirt-bin
+            dest=/etc/default/libvirt-bin
+            owner=root group=root mode=0644
+            backup=yes
+      notify:
+        - restart libvirt
+    
+    - name: ensure /etc/libvirt/libvirtd.conf file is configured
+      copy: >
+            src=files/libvirtd.conf
+            dest=/etc/libvirt/libvirtd.conf
+            owner=root group=root mode=0660
+            backup=yes
+      notify:
+        - restart libvirt
+
+    - name: ensure /etc/init/libvirt-bin.conf file is configured
+      copy: >
+            src=files/libvirt-bin.conf
+            dest=/etc/init/libvirt-bin.conf
+            owner=root group=root mode=0644
+            backup=yes
+      notify:
+        - restart libvirt
+
+    - name: ensure /etc/libvirt/qemu.conf file is configured
+      copy: >
+            src=files/qemu.conf
+            dest=/etc/libvirt/qemu.conf
+            owner=root group=root mode=0660
+            backup=yes
+      notify:
+        - restart libvirt
+    
+    - name: ensure virbr0 is absent
+      shell: virsh net-destroy default && virsh net-undefine default
+      when: "'virbr0' in ansible_interfaces"
+      ignore_errors: True
+      notify: restart libvirt
+    
+  handlers:
+    - name: restart libvirt
+      service: name=libvirt-bin state=restarted
+    
+    - name: restart nova-compute
+      service: name=nova-compute state=restarted

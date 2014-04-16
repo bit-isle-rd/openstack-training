@@ -1,0 +1,84 @@
+# api-paste.ini
+auth_host: "{{primary_auth_int_fqdn}}"
+auth_port: 35357
+auth_protocol: http
+service_tenant: service
+service_user: cinder
+
+# cinder.conf
+pybasedir: /usr/lib/python2.7/dist-packages
+state_path: /var/lib/cinder
+lock_path: /var/lock/cinder
+log_dir: /var/log/cinder
+quota_volumes: 10
+quota_snapshots: 10
+quota_gigabytes: 1000
+reservation_expire: 86400
+report_interval: 10
+periodic_interval: 60
+periodic_fuzzy_delay: 60
+osapi_volume_listen: "{{my_int_ip}}"
+osapi_volume_listen_port: 8776
+
+# If you do not use backup. We specify a blank.
+backup_driver:
+
+# Backup to Ceph
+backup_ceph_conf: /etc/ceph/ceph.conf
+backup_ceph_user: cinder
+backup_ceph_chunk_size: 134217728
+backup_ceph_pool: backups
+backup_ceph_stripe_unit: 0
+backup_ceph_stripe_count: 0
+restore_discard_excess_bytes: true
+
+# Backup to Swift
+backup_swift_url: http://localhost:8080/v1/AUTH_
+backup_swift_auth: per_user
+backup_swift_user:
+backup_swift_key:
+backup_swift_container: volumebackups
+backup_swift_object_size: 52428800
+backup_swift_retry_attempts: 3
+backup_swift_retry_backoff: 2
+backup_compression_algorithm: zlib
+
+my_ip: "{{my_int_ip}}"
+glance_host: "{{primary_frontend_int_fqdn}}"
+glance_port: 9292
+glance_api_insecure: false
+glance_api_ssl_compression: false
+enable_v1_api: true
+enable_v2_api: true
+api_rate_limit: true
+host: "{{ansible_hostname}}"
+storage_availability_zone: nova
+default_availability_zone: nova
+memcached_servers:
+default_volume_type:
+enabled_backends:
+no_snapshot_gb_quota: false
+nova_api_insecure: false
+cinder_db_host: "{{primary_db_int_fqdn}}"
+debug: true
+verbose: true
+use_syslog: false
+syslog_log_facility: LOG_USER
+
+# If rabbit_hosts is not specified, We use rabbit_host and rabbit_port.
+rabbit_host: "{{primary_rabbitmq_int_fqdn}}"
+rabbit_port: 5672
+rabbit_hosts:
+rabbit_use_ssl: false
+rabbit_userid: cinder
+rabbit_virtual_host: /cinder
+rabbit_ha_queues: false
+
+snapshot_same_host: true
+cloned_volume_same_az: true
+iscsi_ip_address: "{{my_int_ip}}"
+iscsi_port: 3260
+iscsi_helper: tdtadm
+volume_backend_name: cinder-volume
+volume_driver: cinder.volume.drivers.lvm.LVMISCSIDriver
+volume_group: vol001-vg

@@ -1,0 +1,44 @@
+---
+- name: OpenStack Block Storage (Backend)
+  hosts: volume_backend
+  sudo: yes
+  gather_facts: yes
+  vars_files:
+    - ../../program_vars/database_password
+    - ../../program_vars/keystone_data
+    - ../../program_vars/rabbitmq
+    - ../../program_vars/cinder
+
+  tasks:
+    - name: ensure cinder-related packages are installed
+      apt: pkg={{item}} force=yes
+      with_items:
+        - cinder-common
+        - cinder-volume
+        - python-cinderclient
+        - python-mysqldb
+        - python-memcache
+        - tgt
+        - open-iscsi
+
+    - name: ensure api-paste.ini file is configured
+      template: >
+          src=files/api-paste.ini
+          dest=/etc/cinder/api-paste.ini
+          owner=cinder group=cinder mode=0644 backup=yes
+
+    - name: ensure cinder.conf file is configured
+      template: >
+          src=files/cinder.conf
+          dest=/etc/cinder/cinder.conf
+          owner=cinder group=cinder mode=0644 backup=yes
+      notify:
+        - restart cinder
+        - restart open-iscsi
+      
+  handlers:
+    - name: restart cinder
+      service: name=cinder-volume state=restarted
+
+    - name: restart open-iscsi
+      service: name=open-iscsi state=restarted

@@ -1,0 +1,53 @@
+# neutron.conf
+debug: True
+verbose: True
+bind_host: 0.0.0.0
+bind_port: 9696
+service_plugins: neutron.services.loadbalancer.plugin.LoadBalancerPlugin
+#service_plugins: neutron.services.l3_router.l3_router_plugin.L3RouterPlugin
+allow_overlapping_ips: True
+rabbit_hosts: 
+rabbit_host: "{{primary_rabbitmq_int_fqdn}}"
+rabbit_port: 5672
+rabbit_max_retries: 0
+rabbit_retry_interval: 1
+rabbit_ha_queues: False
+network_auto_schedule: True
+router_auto_schedule: True
+quota_items: network,subnet,port
+default_quota: -1
+quota_network: 10
+quota_subnet: 10
+quota_port: 50
+quota_security_group: 10
+quota_security_group_rule: 100
+auth_host: "{{primary_auth_int_fqdn}}"
+auth_port: 35357
+auth_protocol: http
+service_tenant: service
+service_user: neutron
+neutron_db_host: "{{primary_db_int_fqdn}}"
+
+# dhcp_agent.ini
+dhcp_debug: True
+dhcp_resync_interval: 5
+dhcp_num_sync_threads: 4
+dhcp_domain: openstacklocal
+
+# l3_agent.ini
+l3_debug: True
+l3_metadata_port: 9697
+l3_send_arp_for_ha: 3
+l3_periodic_interval: 40
+l3_periodic_fuzzy_delay: 5
+
+# lbaas_agent.ini
+lbaas_debug: True
+lbaas_periodic_interval: 10
+
+# metadata_agent.ini
+metadata_debug: True
+auth_url: "http://{{primary_frontend_int_fqdn}}:5000/v2.0"
+neutron_region: "{{region}}"
+nova_metadata_ip: "{{primary_frontend_int_fqdn}}"
+nova_metadata_port: 8775

@@ -1,0 +1,42 @@
+---
+- name: OpenStack Block Storage (Frontend)
+  hosts: frontend
+  sudo: yes
+  gather_facts: yes
+  vars_files:
+    - ../../program_vars/database_password
+    - ../../program_vars/keystone_data
+    - ../../program_vars/rabbitmq
+    - ../../program_vars/cinder
+
+  tasks:
+    - name: ensure cinder-related packages are installed
+      apt: pkg={{item}} force=yes
+      with_items:
+        - cinder-common
+        - cinder-api
+        - python-cinderclient
+        - python-mysqldb
+        - python-memcache
+
+    - name: ensure api-paste.ini file is configured
+      template: >
+          src=files/api-paste.ini
+          dest=/etc/cinder/api-paste.ini
+          owner=cinder group=cinder mode=0644 backup=yes
+    
+    - name: ensure cinder.conf file is configured
+      template: >
+          src=files/cinder.conf
+          dest=/etc/cinder/cinder.conf
+          owner=cinder group=cinder mode=0644 backup=yes
+    
+    - name: ensure keystone database is initialized
+      command: /usr/bin/cinder-manage db sync
+      #when: "ansible_hostname == primary_cinder_host"
+      notify:
+        - restart cinder
+
+  handlers:
+    - name: restart cinder
+      service: name=cinder-api state=restarted

@@ -1,0 +1,43 @@
+# If want to enable service, you add this array.
+# support service: nova, keystone, glance, cinder, neutron
+enable_services: ['nova', 'keystone', 'glance', 'cinder', 'neutron']
+
+# network parameters
+ansible_hostname : localhost
+primary_database_host: localhost
+primary_keystone_host: localhost
+primary_glance_host: localhost
+primary_nova_host: localhost
+primary_cinder_host: localhost
+primary_neutron_host: localhost
+primary_rabbitmq_host: localhost
+
+# Endpoint
+#primary_keystone_ext_fqdn: 182.236.74.210
+#primary_frontend_ext_fqdn: 182.236.74.210
+primary_keystone_ext_fqdn: localhost 
+primary_frontend_ext_fqdn: localhost
+
+primary_db_int_fqdn: localhost
+primary_auth_int_fqdn: localhost
+primary_frontend_int_fqdn: localhost
+#nova.conf metadata_host = primary_frontend_int_ip
+primary_frontend_int_ip: localhost
+primary_rabbitmq_int_fqdn: localhost
+
+# set below if you use multiple frontend/controller
+#mcast_address_controller: 239.0.0.1
+#mcast_address_frontend: 239.0.0.2
+
+#http_proxy: http://localhost:3142/
+
+# No necessary to define addresses below (for clustering)
+#controller_ip: 192.168.12.109
+#frontend_ext_ip: 192.168.0.141
+#frontend_int_ip: 192.168.12.109
+
+# If want to enable an NTP server, you need external_ntp_servers / internal_ntp_servers
+# external_ntp_servers and internal_ntp_servers is array
+external_ntp_servers: ['210.173.160.27', '210.173.160.57', '210.173.160.87']
+internal_ntp_servers: ['210.173.160.27', '210.173.160.57', '210.173.160.87']
+#internal_ntp_servers: ['127.0.0.1']

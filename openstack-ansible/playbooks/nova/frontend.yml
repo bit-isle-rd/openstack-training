@@ -1,0 +1,51 @@
+---
+- name: OpenStack Compute (Frontend)
+  hosts: frontend
+  sudo: yes
+  vars_files:
+    - ../../program_vars/database_password
+    - ../../program_vars/keystone_data
+    - ../../program_vars/rabbitmq
+    - ../../program_vars/nova
+    - ../../program_vars/neutron_metadata_key
+
+  tasks:
+    - name: ensure nova packages are installed
+      apt: pkg={{item}} force=yes
+      with_items:
+        - nova-cert
+        - nova-api
+        - nova-novncproxy
+        - novnc
+        - python-mysqldb
+        - python-memcache
+
+    - name: ensure api-paste.ini file is configured
+      template: >
+            src=files/api-paste.ini
+            dest=/etc/nova/api-paste.ini
+            owner=nova
+            group=nova
+            mode=0660
+            backup=yes
+      notify:
+        - restart nova services
+
+    - name: ensure nova.conf file is configured
+      template: >
+            src=files/nova.conf
+            dest=/etc/nova/nova.conf
+            owner=nova
+            group=nova
+            mode=0660
+            backup=yes
+      notify:
+        - restart nova services
+
+  handlers:
+    - name: restart nova services
+      service: name={{item}} state=restarted
+      with_items:
+        - nova-api
+        - nova-novncproxy
+        - nova-cert

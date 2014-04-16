@@ -1,0 +1,44 @@
+---
+- name: OpenStack Networking (Agent)
+  hosts: network_gateway:compute_backend
+  gather_facts: yes
+  sudo: yes
+  vars_files:
+    - ../../program_vars/database_password
+    - ../../program_vars/keystone_data
+    - ../../program_vars/rabbitmq
+    - ../../program_vars/neutron
+    - ../../program_vars/neutron_metadata_key
+
+  tasks:
+    - name: ensure net.ipv4.conf.all.rp_filter is 0
+      sysctl: name=net.ipv4.conf.all.rp_filter value=0 state=present 
+
+    - name: ensure net.ipv4.conf.default.rp_filter is 0
+      sysctl: name=net.ipv4.conf.default.rp_filter value=0 state=present 
+
+    - name: ensure neutron-plugin-openvswitch-agent package is installed
+      apt: name={{item}} force=yes
+      with_items:
+        - neutron-plugin-openvswitch-agent
+        - python-mysqldb
+
+    - name: ensure ovs_neutron_plugin.ini file is configured
+      template: >
+            src=files/ovs_neutron_plugin.ini
+            dest=/etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini
+            owner=neutron group=neutron mode=0660 backup=yes
+      notify:
+        - restart ovs-agent
+
+    - name: ensure neutron.conf file is configured
+      template: >
+            src=files/neutron.conf
+            dest=/etc/neutron/neutron.conf
+            owner=neutron group=neutron mode=0660 backup=yes
+      notify:
+        - restart ovs-agent
+ 
+  handlers:
+    - name: restart ovs-agent
+      service: name=neutron-plugin-openvswitch-agent state=restarted

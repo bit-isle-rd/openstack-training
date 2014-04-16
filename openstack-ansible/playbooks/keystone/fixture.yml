@@ -1,0 +1,22 @@
+---
+- name: OpenStack Identity (Fixture(s))
+  hosts: keystone
+  gather_facts: yes
+  sudo: yes
+  vars_files:
+    - ../../program_vars/database_password
+    - ../../program_vars/keystone_data
+
+  tasks:
+    - name: ensure keystone_data.sh is created
+      template: >
+             src=files/keystone_data.sh
+             dest=/root/keystone_data.sh
+             owner=root
+             group=root
+             mode=0755
+      #when: "ansible_hostname == primary_keystone_host"
+
+    - name: ensure keystone db is initialized
+      command: /root/keystone_data.sh
+      #when: "ansible_hostname == primary_keystone_host"

@@ -1,0 +1,41 @@
+---
+- name: OpenStack Identity
+  hosts: keystone
+  sudo: yes
+  vars_files:
+    - ../../program_vars/database_password
+
+  tasks:
+    - name: ensure keystone package is installed
+      apt: pkg={{item}} state=latest force=yes
+      with_items:
+        - keystone
+        - python-mysqldb
+        - python-memcache
+    
+    - name: ensure keystone service running
+      service: name=keystone state=started
+    
+    - name: ensure sqlite keystone database is deleted
+      file: >
+          dest=/var/lib/keystone/keystone.db
+          state=absent
+    
+    - name: ensure keystone.conf file is configured
+      template: >
+          src=files/keystone.conf
+          dest=/etc/keystone/keystone.conf
+          owner=keystone
+          group=keystone
+          mode=0600
+          backup=yes
+      notify: restart keystone
+    
+    - name: ensure keystone database is initialized
+      command: /usr/bin/keystone-manage db_sync
+      #when: "ansible_hostname == primary_keystone_host"
+      notify: restart keystone
+    
+  handlers:
+    - name: restart keystone
+      service: name=keystone state=restarted

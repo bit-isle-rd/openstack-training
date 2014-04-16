@@ -1,0 +1,62 @@
+my_ext_if: eth0
+my_ext_ip: ${ansible_eth0.ipv4.address}
+my_ext_obj: $ansible_eth0
+
+my_int_if: eth1
+my_int_ip: ${ansible_eth1.ipv4.address}
+my_int_obj: $ansible_eth1
+
+# Glance common
+auth_host: "{{primary_auth_int_fqdn}}"
+auth_port: 35357
+auth_protocol: http
+service_tenant: service
+service_user: glance
+glance_db_host: "{{primary_db_int_fqdn}}"
+
+# glance-api.conf
+verbose: True
+debug: True
+default_store: file
+bind_host: 0.0.0.0
+bind_port: 9292
+workers: 1
+admin_role: admin
+allow_anonymous_access: False
+enable_v1_api: True
+enable_v2_api: True
+show_image_direct_url: False
+send_identity_headers: False
+user_storage_quota: 0
+use_syslog: False
+syslog_log_facility: LOG_LOCAL0
+registry_host: 0.0.0.0
+registry_port: 9191
+registry_client_protocol: http
+registry_client_insecure: False
+db_auto_create: False
+sqlalchemy_debug: True
+notifier_strategy: rabbit
+rabbit_host: "{{primary_rabbitmq_int_fqdn}}"
+rabbit_port: 5672
+rabbit_use_ssl: False
+rabbit_userid: glance
+rabbit_virtual_host: /glance
+rabbit_durable_queues: False
+cinder_http_retries: 3
+cinder_api_insecure: False
+scrubber_datadir: /var/lib/glance/scrubber
+image_cache_dir: /var/lib/glance/image-cache/
+disk_formats: ami,ari,aki,vhd,vmdk,raw,qcow2,vdi,iso
+filesystem_store_datadir: /var/lib/glance/images/
+
+# glance-resgistry.conf
+gr_verbose: True
+gr_debug: True
+gr_bind_host: 0.0.0.0
+gr_bind_port: 9191
+gr_admin_role: admin
+gr_db_auto_create: False
+gr_sqlalchemy_debug: True
+gr_use_syslog: False
+gr_syslog_log_facility: LOG_LOCAL1

@@ -1,0 +1,83 @@
+---
+- name: OpenStack Networking (Network Gateway)
+  hosts: network_gateway
+  gather_facts: yes
+  sudo: yes
+  vars_files:
+    - ../../program_vars/database_password
+    - ../../program_vars/keystone_data
+    - ../../program_vars/rabbitmq
+    - ../../program_vars/neutron
+    - ../../program_vars/neutron_metadata_key
+
+  tasks:
+    - name: ensure net.ipv4.ip_forward is 1
+      sysctl: name=net.ipv4.ip_forward value=1 state=present 
+
+    - name: ensure net.ipv4.conf.all.rp_filter is 0
+      sysctl: name=net.ipv4.conf.all.rp_filter value=0 state=present 
+
+    - name: net.ipv4.conf.default.rp_filter is 0
+      sysctl: name=net.ipv4.conf.default.rp_filter value=0 state=present 
+
+    - name: ensure each neutron agents are installed
+      apt: name={{item}} force=yes
+      with_items:
+        - neutron-l3-agent
+        - neutron-dhcp-agent
+        - neutron-lbaas-agent
+        - neutron-metadata-agent
+        - python-mysqldb
+
+    - name: ensure neutron.conf file is configured
+      template: >
+            src=files/neutron.conf
+            dest=/etc/neutron/neutron.conf
+            owner=neutron group=neutron mode=0660 backup=yes
+      notify:
+        - restart l3 agent
+        - restart dhcp agent
+        - restart lbaas agent
+        - restart metadata agent
+
+    - name: ensure dhcp_agent.ini file is configured
+      template: >
+            src=files/dhcp_agent.ini
+            dest=/etc/neutron/dhcp_agent.ini
+            owner=neutron group=neutron mode=0660 backup=yes
+      notify: restart dhcp agent
+
+    - name: ensure l3_agent.ini file is configured
+      template: >
+            src=files/l3_agent.ini
+            dest=/etc/neutron/l3_agent.ini
+            owner=neutron group=neutron mode=0660 backup=yes
+      notify: restart l3 agent
+
+    - name: ensure lbaas_agent.ini file is configured
+      template: >
+            src=files/lbaas_agent.ini
+            dest=/etc/neutron/lbaas_agent.ini
+            owner=neutron group=neutron mode=0660 backup=yes
+      notify: restart lbaas agent
+
+    - name: ensure metadata_agent.ini file is configured
+      template: >
+            src=files/metadata_agent.ini
+            dest=/etc/neutron/metadata_agent.ini
+            owner=neutron group=neutron mode=0660 backup=yes
+      notify: restart metadata agent
+
+  handlers:
+    - name: restart l3 agent
+      action: service name=neutron-l3-agent state=restarted
+    
+    - name: restart dhcp agent
+      action: service name=neutron-dhcp-agent state=restarted
+    
+    - name: restart lbaas agent
+      action: service name=neutron-lbaas-agent state=restarted
+    
+    - name: restart metadata agent
+      action: service name=neutron-metadata-agent state=restarted
+
