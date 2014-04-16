@@ -96,4 +96,4 @@ Ansible Playbooks for OpenStack Havana All in one
    Ansible は使いやすく、希少な OSS オーケストレーションツールです。
  * OpenStack コミュニティ。
    素晴らしい OSS クラウド基盤をありがとう。
- * 吉山 あきら <akirayoshiyama@gmail.com>さんのツールからforkしました。
+ * https://github.com/yosshy/openstack-ansible をカスタマイズしました。
