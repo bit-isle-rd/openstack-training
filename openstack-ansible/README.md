@@ -33,7 +33,7 @@ Ansible Playbooks for OpenStack Havana All in one
  * NIC#2 → 内部 LAN
 
 このレシピを実行するために対象のホストに接続する際は内部LAN側のIPアドレスで
-接続してください。
+接続してください。またデフォルトゲートウェイは内部LAN側に設定して下さい。
 
 インストール手順
 ----------------
