@@ -3,21 +3,9 @@ Ansible Playbooks for OpenStack Havana
 
 
 本ツールは OSS のオーケストレーションツール「Ansible」
-（http://ansible.cc/ ）を使って OpenStack Havana 環境をインストールする
-ためのレシピ（Ansible のPlaybook）集です。
+（http://ansible.cc/ ）を使って OpenStack Havana All-in-one 環境をインストールする
+ためのAnsible のPlaybook集です。
 
-本ツールは Darragh O'Reilly の quantum-ansible リポジトリ
-（https://github.com/djoreilly/quantum-ansible ）と
-Lorin Hochstein の openstack-ansible-modules
-（https://github.com/lorin/openstack-ansible-modules ）をベースに、主に
-以下の変更を加えています。
-
- * Playbook 群のロール的な整理（非ロール）
- * ネットワーク設定の完全自動化
- * サーバタイプの見直し（frontend, controller, network_gateway,
-   compute_backend, volume_backend）
- * オールインワン～５サーバタイプへの柔軟な対応
- * OSアカウント整備、他
 
 環境要件
 --------
@@ -71,7 +59,6 @@ LAN で接続されている必要があります。外部 LAN で接続され�
      ```
      git clone https://github.com/ansible/ansible.git
      cd ansible
-     git checkout -b v1.2.3 v1.2.3
      python setup.py build
      sudo -E python setup.py install
      ```
@@ -79,77 +66,15 @@ LAN で接続されている必要があります。外部 LAN で接続され�
  4. 本ツールを展開します。
 
      ```
-     git clone https://github.com/bi-rd-cloud/bird-cloud.git
-     cd bird-cloud/openstack-ansible.3b
+     git clone https://github.com/bit-isle-rd/openstack-training.git
+     cd openstack-training/openstack-ansible.3b
      ```
 
  5. /etc/hosts に OpenStack インストール先サーバの設定を行います。この
     際、各ホストに設定する IP アドレスは内部LAN用である必要があります。
 
- 6. sample_hosts/* を参考に、トップディレクトリに ansible_hosts ファイ
-    ルを作成します。* はそれぞれ以下の構成例です。
-    * all-in-one : １サーバ構成（オールインワン）
-    * 2roles : 制御ノード＋VMホスト構成
-    * 3roles : 制御ノード＋VMホスト＋ネットワークゲートウェイ構成
-    * 5roles : 制御ノード、VMホスト、ネットワークゲートウェイ、フ
-      ロントエンド(API等）、ボリュームホスト構成
 
-    以下は 2roles の例です。
-     ```
-     [controller]
-     ansible2        ←インストール先ホスト名
-
-     [compute_backend]
-     ansible3        ←インストール先ホスト名
-     ansible4        ←インストール先ホスト名
-     ansible5        ←インストール先ホスト名
-     ansible6        ←インストール先ホスト名
-
-     [frontend:children]
-     controller      ←controller を継承（ansible2）
-
-     [network_gateway:children]
-     controller      ←controller を継承（ansible2）
-
-     [volume_backend:children]
-     controller      ←controller を継承（ansible2）
-     ```
-
- 7. group_vars/all の設定項目を設定します。  以下のパラメータは利用環境
-    に合わせて修正して下さい。他のパラメータはデフォルト値で構いません。
-
-     ```
-     network_gateway: 192.168.0.254
-     network_dns: 192.168.0.254
-     http_proxy: http://192.168.12.1:8123/
-     ```
-
-     以下の項目が未設定の場合、Playbook 実行中に値を適当に設定しますが、
-     更新された all ファイルを途中でリロードする機能が Ansible に無い
-     ので、一旦実行が止まります。再実行して下さい。
-
-     ```
-     root_db_password
-     keystone_db_password
-     glance_db_password
-     nova_db_password
-     quantum_db_password
-     cinder_db_password
-     nova_identity_password
-     ec2_identity_password
-     swift_identity_password
-     quantum_identity_password
-     cinder_identity_password
-     admin_token
-     admin_password
-     primary_controller_host
-     primary_frontend_host
-     controller_ip
-     frontend_int_ip
-     frontend_ext_ip
-     ```
-
- 8. Ansible を実行します。  
+ 6. Ansible を実行します。  
 
      ```
      ansible-playbook site.yml
@@ -163,10 +88,6 @@ LAN で接続されている必要があります。外部 LAN で接続され�
     当該パラメータの値を False にして下さい。
 
 
-追記(石川)
-=============
- * NIC は面倒なので手動で設定しろい。
- 
 
 謝辞
 ----
