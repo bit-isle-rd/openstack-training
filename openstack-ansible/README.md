@@ -10,9 +10,9 @@ Ansible Playbooks for OpenStack Havana All in one
 環境要件
 --------
 
- * Ansible 1.2 以降
+ * Ansible 1.4 以降
  * メモリ 2GB 以上の x86-64 マシン（１台以上）
- * Ubuntu 12.04.2
+ * Ubuntu 13.10
  * インターネットに接続可能な環境（HTTP プロキシ使用可能）
 
 ネットワーク環境
@@ -29,22 +29,18 @@ Ansible Playbooks for OpenStack Havana All in one
 フェース(NIC)があり、それらが以下の通りに接続されている事を想定していま
 す。
 
- * NIC#1 → 内部 LAN
- * NIC#2 → 外部 LAN
+ * NIC#1 → 外部 LAN
+ * NIC#2 → 内部 LAN
 
-なお、現在のレシピは Ansible 実行マシンとインストール先のマシン群が内部
-LAN で接続されている必要があります。外部 LAN で接続されている場合、ネッ
-トワークゲートウェイの NIC 設定で通信が切断されてしまい、レシピ実行が失
-敗します。
+このレシピを実行するために対象のホストに接続する際は内部LAN側のIPアドレスで
+接続してください。
 
 インストール手順
 ----------------
 
 1 は全マシン、2 以降は Ansible 実行マシン上で実施します。
 
- 1. x86-64 マシンに Ubuntu 12.04.2 をインストールします。  外部 LAN ・
-    内部 LAN 共に DHCP でも構いませんが、DHCP を使用しない場合はOS イン
-    ストール時に各ネットワークのパラメータを設定する必要があります。
+ 1. Ubuntu 13.10のクラウドイメージを使用し、インスタンスを起動して下さい。
 
  2. Python の開発環境と pwgen をインストールします。
 
@@ -70,22 +66,20 @@ LAN で接続されている必要があります。外部 LAN で接続され�
      cd openstack-training/openstack-ansible.3b
      ```
 
- 5. /etc/hosts に OpenStack インストール先サーバの設定を行います。この
+ 5. 自ホストにノンパスワードでSSH接続できるように証明書を設定してください。
+ 
+ 6. /etc/hosts に OpenStack インストール先サーバの設定を行います。この
     際、各ホストに設定する IP アドレスは内部LAN用である必要があります。
 
 
- 6. Ansible を実行します。  
+ 7. Ansible を実行します。  
 
      ```
      ansible-playbook site.yml
      ```
 
-    SSH パスワードを聞かれるので入力します。sudo パスワードも聞かれます
-    が、デフォルト値が SSH パスワードになっているのでそのまま Enter で
-    構いません。
-
-    SSH パスワード、sudo パスワードが不要な場合、ansible.cfg ファイル中の
-    当該パラメータの値を False にして下さい。
+    SSH パスワード、sudo パスワードが不要となるよう、ansible.cfg ファイル中の
+    当該パラメータの値を False にしています。
 
 
 
@@ -102,4 +96,4 @@ LAN で接続されている必要があります。外部 LAN で接続され�
    Ansible は使いやすく、希少な OSS オーケストレーションツールです。
  * OpenStack コミュニティ。
    素晴らしい OSS クラウド基盤をありがとう。
- * 吉山 あきら <akirayoshiyama@gmail.com>からforkしました。
+ * 吉山 あきら <akirayoshiyama@gmail.com>さんのツールからforkしました。
