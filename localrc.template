@@ -1,0 +1,32 @@
+HOST_IP=#my_ip#
+ADMIN_PASSWORD=y7u8i9YUI
+MYSQL_PASSWORD=$ADMIN_PASSWORD
+RABBIT_PASSWORD=$ADMIN_PASSWORD
+SERVICE_PASSWORD=$ADMIN_PASSWORD
+SERVICE_TOKEN=99988777666
+
+enable_service q-svc
+enable_service q-agt
+enable_service q-dhcp
+enable_service q-l3
+enable_service q-meta
+enable_service q-lbaas
+enable_service quantum
+
+enable_service n-novnc
+disable_service n-obj
+disable_service n-net
+disable_service n-xvnc
+disable_service n-spice
+
+FIXED_RANGE=172.16.0.0/24
+NETWORK_GATEWAY=172.16.0.254
+FLOATING_RANGE=10.0.0.0/24
+LOGFILE=stack.sh.log
+SCREEN_LOGDIR=/opt/stack/logs
+
+ENABLE_TENANT_TUNNELS=True
+
+EXTRA_OPTS=(
+vnc_keymap=ja
+)
