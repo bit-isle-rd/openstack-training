@@ -1,0 +1,19 @@
+export OS_AUTH_URL=https://auth.rdcloud.bi-rd.jp/v2.0
+
+# With the addition of Keystone we have standardized on the term **tenant**
+# as the entity that owns the resources.
+export OS_TENANT_ID=23b5c8313af241d1bc0f3bd9b574a2eb
+export OS_TENANT_NAME="training-handson"
+
+# In addition to the owning entity (tenant), openstack stores the entity
+# performing the action as the **user**.
+export OS_USERNAME="training-handson"
+
+# With Keystone you pass the keystone password.
+#export OS_PASSWORD=""
+echo "Please enter your OpenStack Password: "
+read -sr OS_PASSWORD_INPUT
+export OS_PASSWORD=$OS_PASSWORD_INPUT
+
+
+alias swift='swift --insecure'
